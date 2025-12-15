@@ -339,7 +339,7 @@ function AdminPannel() {
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-2">Phone Number</label>
                 <Input
-                  type="text"
+                  type="number"
                   value={phoneNo}
                   onChange={(e) => setPhoneNo(e.target.value)}
                   placeholder="Enter phone number"
