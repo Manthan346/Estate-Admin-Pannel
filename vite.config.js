@@ -10,7 +10,7 @@ export default defineConfig({
   tailwindcss(),
   ],
   server: {
-    port: 5175, // Set the desired port number
+    port: 5173, // Set the desired port number
     strictPort: true, // Optional: forces Vite to use this exact port
   }
 })

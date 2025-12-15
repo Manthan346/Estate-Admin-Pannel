@@ -11,6 +11,7 @@ import { useMultiImage } from "../Hooks/useMultiImage";
 import { Button } from "../components/ui/button";
 import { cityList, fetchProject, addNewProject } from "../api";
 import { Spinner } from "../components/ui/spinner"
+import { ToastContainer, toast, Bounce } from 'react-toastify';
 
 function AdminPannel() {
   const [city, setCity] = useState([])
@@ -35,13 +36,18 @@ function AdminPannel() {
   const [floorDetail, setFloorDetail] = useState([{ image: null, preview: null, description: "" }])
   const [priceList, setPriceList] = useState([{ typology: "", size: "", price: "" }])
 
-  const fetchCity = async () => { 
+  const fetchCity = async () => {
     try {
       const response = await cityList()
       const result = response.data.data.city
       setCity(result)
     } catch (error) {
-      alert(error.message)
+      toast.error(error.message, {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   }
 
@@ -55,7 +61,12 @@ function AdminPannel() {
       const result = response.data.data.project
       setProjectName(result)
     } catch (error) {
-      alert(error.message)
+      toast.error(error.message, {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   }
 
@@ -105,7 +116,12 @@ function AdminPannel() {
     e.preventDefault()
 
     if (!selectCity || !selectProject || !companyAdress || !description || !type || !price || !phoneNo) {
-      alert("Please fill all required fields")
+      toast.error("Please fill all required fields", {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "light",
+        transition: Bounce,
+      });
       return
     }
     setLoading(true)
@@ -179,10 +195,25 @@ function AdminPannel() {
     try {
       const response = await addNewProject(formData)
       console.log("Success:", response)
-      alert("Property added successfully!")
+      toast.success('property added successfully', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     } catch (error) {
       console.error("Error:", error)
-      alert("Failed to add property: " + (error.response?.data?.message || error.message))
+      toast.error(error.message || response.data?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "light",
+        transition: Bounce,
+      });
     }
     setLoading(false)
   };
@@ -213,15 +244,15 @@ function AdminPannel() {
                 onChange={handleImage("mainImage")}
                 className="mb-3"
               />
-              
-                <div className="rounded-lg overflow-hidden border border-border bg-muted/20">
-                  <img
-                    src={images.mainImage?.preview}
-                    className="h-[500px] w-full object-cover"
-                    alt=""
-                  />
-                </div>
-             
+
+              <div className="rounded-lg overflow-hidden border border-border bg-muted/20">
+                <img
+                  src={images.mainImage?.preview}
+                  className="h-[500px] w-full object-cover"
+                  alt=""
+                />
+              </div>
+
             </div>
 
             {/* Property Type */}
@@ -534,7 +565,7 @@ function AdminPannel() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-foreground mb-2">Gallery Images</label>
+              <label className="block text-sm font-semibold text-foreground mb-2">Gallery Images (select multiple images)</label>
               <Input
                 type="file"
                 accept="image/*"
@@ -559,26 +590,26 @@ function AdminPannel() {
         </Card>
 
         {/* Company Logo Card */}
-      
+
 
         {/* Submit Button */}
         {
           loading ? <div className="flex justify-end">
-           <Button disabled className="px-6 py-3">
-            <Spinner className="mr-2" />
-            Submitting details
-          </Button>
-          </div> :  <div className="flex justify-end">
-          <Button 
-            type="submit" 
-            onClick={handleSubmit}
-            className="w-full sm:w-auto px-8"
-          >
-            Submit Property
-          </Button>
-        </div>
+            <Button disabled className="px-6 py-3">
+              <Spinner className="mr-2" />
+              Submitting details
+            </Button>
+          </div> : <div className="flex justify-end">
+            <Button
+              type="submit"
+              onClick={handleSubmit}
+              className="w-full sm:w-auto px-8"
+            >
+              Submit Property
+            </Button>
+          </div>
         }
-       
+
       </div>
     </div>
   );
