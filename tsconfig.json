@@ -1,0 +1,29 @@
+  {
+    "compilerOptions": {
+      "allowJs": true,
+      "target": "ESNext",
+      "lib": ["DOM", "DOM.Iterable", "ESNext"],
+      "module": "ESNext",
+      "moduleResolution": "Node",
+      "jsx": "react-jsx",
+
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+
+      "resolveJsonModule": true,
+      "isolatedModules": true,
+      "noEmit": true,
+
+      "baseUrl": ".",
+      "paths": {
+        "@/*": ["src/*"],
+        "@/components/*": ["src/components/*"],
+        "@/lib/*": ["src/lib/*"],
+        "@/hooks/*": ["src/hooks/*"],
+        "@/utils/*": ["src/utils/*"]
+      }
+    },
+    "include": ["src", "vite.config.ts", "tailwind.config.ts"]
+  }
