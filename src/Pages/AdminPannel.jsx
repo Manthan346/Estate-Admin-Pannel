@@ -9,9 +9,10 @@ import { Textarea } from '../components/ui/textarea'
 import { useBullets } from "../Hooks/useBullets";
 import { useMultiImage } from "../Hooks/useMultiImage";
 import { Button } from "../components/ui/button";
-import { cityList, fetchProject, addNewProject } from "../api";
+import { cityList, fetchProject, addNewProperty } from "../api";
 import { Spinner } from "../components/ui/spinner"
 import { ToastContainer, toast, Bounce } from 'react-toastify';
+import { addCity, addProject } from "../api";
 
 function AdminPannel() {
   const [city, setCity] = useState([])
@@ -21,10 +22,56 @@ function AdminPannel() {
   const [price, setPrice] = useState("")
   const [type, setType] = useState("")
   const [companyAdress, setCompanyAddress] = useState("")
+  const [newCity, setNewCity] = useState("")
+  const [newProject, setNewProject] = useState("")
+  const [addingCity, setAddingCity] = useState(false)
+  const [addingProject, setAddingProject] = useState(false)
+
 
   const [phoneNo, setPhoneNo] = useState("")
   const [description, setDescription] = useState("")
   const [loading, setLoading] = useState(false)
+
+  const handleAddCity = async () => {
+    if (!newCity.trim()) return toast.error("City name required")
+
+    try {
+      setAddingCity(true)
+      const res = await addCity({ name: newCity })
+
+      toast.success("City added successfully")
+      setNewCity("")
+
+      await fetchCity()
+
+      // auto select newly added city
+      setSelectCity(res.data.data.id)
+    } catch (err) {
+      toast.error(err.message)
+    } finally {
+      setAddingCity(false)
+    }
+  }
+
+  const handleAddProject = async () => {
+    if (!newProject.trim()) return toast.error("Project name required")
+
+    try {
+      setAddingProject(true)
+      const res = await addProject({ name: newProject })
+
+      toast.success("Project added successfully")
+      setNewProject("")
+
+      await fetchAllProject()
+
+      setSelectProject(res.data.data.id)
+    } catch (err) {
+      toast.error(err.message)
+    } finally {
+      setAddingProject(false)
+    }
+  }
 
   const { text: facilitiesText, bullets: facilitiesBullets, handleBullets: facilitiesHandle } = useBullets();
   const { text: highlightText, bullets: highlightBullets, handleBullets: highlightHandle } = useBullets();
@@ -136,6 +183,7 @@ function AdminPannel() {
     formData.append("phoneNum", phoneNo)
     formData.append("price", price)
 
+
     facilitiesBullets.forEach((facility, index) => {
       formData.append(`facilities[${index}]`, facility)
     })
@@ -193,7 +241,7 @@ function AdminPannel() {
     }
 
     try {
-      const response = await addNewProject(formData)
+      const response = await addNewProperty(formData)
       console.log("Success:", response)
       toast.success('property added successfully', {
         position: "top-right",
@@ -271,10 +319,10 @@ function AdminPannel() {
 
             {/* Company Name */}
             <div>
-              <label className="block text-sm font-semibold text-foreground mb-2">Company Name</label>
-              <Select onValueChange={(value) => setSelectProject(value)}>
+              <label className="block text-sm font-semibold text-foreground mb-2">Select Project Name</label>
+              <Select value={selectProject} onValueChange={setSelectProject}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select company" />
+                  <SelectValue placeholder="Select Project Name" />
                 </SelectTrigger>
                 <SelectContent>
                   {projectName.map((item, index) => (
@@ -286,10 +334,31 @@ function AdminPannel() {
               </Select>
             </div>
 
+            <div className="space-y-2">
+              <p className="text-sm font-semibold">
+                Add Project (if not present)
+              </p>
+
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Enter project name"
+                  value={newProject}
+                  onChange={(e) => setNewProject(e.target.value)}
+                />
+                <Button
+                  type="button"
+                  onClick={handleAddProject}
+                  disabled={addingProject}
+                >
+                  {addingProject ? "Adding..." : "Add"}
+                </Button>
+              </div>
+            </div>
+
             {/* City */}
             <div>
               <label className="block text-sm font-semibold text-foreground mb-2">City</label>
-              <Select onValueChange={(value) => setSelectCity(value)}>
+              <Select value={selectCity} onValueChange={setSelectCity}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select city" />
                 </SelectTrigger>
@@ -301,6 +370,27 @@ function AdminPannel() {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-semibold">
+                Add City (if not present)
+              </p>
+
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Enter city name"
+                  value={newCity}
+                  onChange={(e) => setNewCity(e.target.value)}
+                />
+                <Button
+                  type="button"
+                  onClick={handleAddCity}
+                  disabled={addingCity}
+                >
+                  {addingCity ? "Adding..." : "Add"}
+                </Button>
+              </div>
             </div>
 
             {/* Address */}

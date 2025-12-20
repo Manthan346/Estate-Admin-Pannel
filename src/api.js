@@ -64,7 +64,10 @@ export const cityList = () => API.get("property/fetch-all-city");
 
 export const fetchProject = () => API.get("property/fetch-all-project");
 
-export const addNewProject = (data) =>
+export const addCity = (data) => API.post("property/city", data)
+export const addProject = (data) => API.post("property/project", data)
+
+export const addNewProperty = (data) =>
   API.post("property/add-new", data);
 
 export default API;
